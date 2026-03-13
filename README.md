@@ -7,7 +7,7 @@
 ---
 
 <p align="center">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Computer_mouse.svg/400px-Computer_mouse.svg.png" alt="Computer Mouse" width="180"/>
+  <img src="https://www.shutterstock.com/search/computer-arrow-on-screen" alt="Computer Mouse" width="180"/>
 </p>
 
 ---
