@@ -82,21 +82,25 @@ Physical Mouse ──► [EXCLUSIVE GRAB] ──► STFTFilter (FFT + EMA) ─�
 
 ### Prerequisites
 ```bash
+# On Ubuntu/Debian:
 sudo apt install libfftw3-dev
+
+# On Fedora/RHEL:
+sudo dnf install fftw-devel
 ```
 
 ### Build
 ```bash
-g++ main.cpp -o stable_motion -lfftw3 -lpthread
+g++ main.cpp -o stable_motion -lfftw3
 ```
 
 ### Run
 ```bash
 # Find your mouse device
-ls /dev/input/by-id/
+ls -l /dev/input/by-id/
 
 # Run with sudo (required for uinput and device grab)
-sudo ./stable_motion /dev/input/eventX
+sudo ./stable_motion /dev/input/eventX [glide_factor]
 ```
 
 ### Stop
@@ -114,7 +118,7 @@ CTRL+C
 | Target Frequency Band | **4–6 Hz** (Parkinson's tremor range) |
 | Output Poll Rate | **~1000 Hz** (upscaled from 125 Hz) |
 | Hardware Required | **None** (pure software) |
-| Platform | **Linux** (Ubuntu/Debian) |
+| Platform | **Linux** (Ubuntu/Debian/Fedora) |
 
 ---
 
@@ -137,7 +141,6 @@ Port to Windows (HID drivers) and macOS (global input hooks). Potential health m
 ## ⚠️ Known Limitations
 
 - **Linux only** — uses `/dev/uinput` and Linux input subsystem
-- **No scroll wheel** — `REL_WHEEL` not forwarded through virtual device
 - **No middle click** — only left and right buttons registered
 - **64-sample warmup** — filter bypassed until buffer is full
 - Requires `sudo` to run
@@ -146,12 +149,12 @@ Port to Windows (HID drivers) and macOS (global input hooks). Potential health m
 
 ## 🛠️ Tech Stack
 
-`C++17` · `FFTW3` · `Linux uinput` · `Linux input subsystem` · `pthreads`.`python`
+`C++17` · `FFTW3` · `Linux uinput` · `Linux input subsystem`
 
 ---
 
 ## 📄 License
 
-MIT License — free to use, modify, and distribute.
+This project is maintained under the **GNU General Public License 3.0**.
 
 ---
