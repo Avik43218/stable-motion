@@ -17,7 +17,7 @@ private:
     fftw_complex *in, *out;
     fftw_plan p_forward, p_backward;
 
-    double previous_ouput = 0.0;
+    double previous_output = 0.0;
     double alpha;
     double fractional_remainder = 0.0;
 
@@ -48,6 +48,28 @@ public:
             in[i][0] = static_cast<double>(buffer[i]);
             in[i][1] = 0.0;
         }
-        
+
+        fftw_execute(p_forward);
+
+        double df = SMC::SAMPLE_RATE / SMC::WINDOW_SIZE;
+        for (int i = 0; i < SMC::WINDOW_SIZE; i++) {
+            double freq = (i <= SMC::WINDOW_SIZE / 2) ? (i * df) : ((SMC::WINDOW_SIZE - i) * df);
+            if (freq >= 4.0 && freq <= 6.0) {
+                out[i][0] = 0.0; 
+                out[i][1] = 0.0;
+            }
+        }
+
+        fftw_execute(p_backward);
+
+        double raw_stft_output = in[SMC::WINDOW_SIZE - 1][0] / SMC::WINDOW_SIZE;
+        double smoothed_output = (alpha * raw_stft_output) + ((1.0 - alpha) * previous_output);
+        previous_output = smoothed_output;
+
+        smoothed_output += fractional_remainder;
+        int final_out = static_cast<int>(smoothed_output);
+        fractional_remainder = smoothed_output - final_out;
+
+        return final_out;
     }
 };
