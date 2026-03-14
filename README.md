@@ -108,7 +108,7 @@ sudo ./target/release/stable_motion_tui
 ```
 
 ### Stop
-```
+```bash
 # For CLI
 CTRL+C
 
