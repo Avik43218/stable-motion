@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -uo pipefail
 
 # ─── Args ─────────────────────────────────────────────────────────────────────
 DEVICE="${1:-}"
@@ -25,15 +25,12 @@ if [[ ! -x "$BINARY" ]]; then
 fi
 
 # ─── Recover the real user's Wayland session ──────────────────────────────────
-# When run as sudo, we need to reach back into the login user's session
 REAL_USER="${SUDO_USER:-$USER}"
 REAL_UID="$(id -u "$REAL_USER")"
 
 export XDG_RUNTIME_DIR="/run/user/$REAL_UID"
 
-# Prefer whatever WAYLAND_DISPLAY is already set, else default to wayland-0
 if [[ -z "${WAYLAND_DISPLAY:-}" ]]; then
-    # Try to find the active wayland socket in the user's runtime dir
     WAYLAND_SOCK="$(ls "$XDG_RUNTIME_DIR"/wayland-* 2>/dev/null | head -1)"
     if [[ -n "$WAYLAND_SOCK" ]]; then
         export WAYLAND_DISPLAY="$(basename "$WAYLAND_SOCK")"
@@ -43,6 +40,27 @@ if [[ -z "${WAYLAND_DISPLAY:-}" ]]; then
 fi
 
 export DBUS_SESSION_BUS_ADDRESS="unix:path=$XDG_RUNTIME_DIR/bus"
+
+# ─── Cursor theme ─────────────────────────────────────────────────────────────
+ORIGINAL_THEME="$(sudo -u "$REAL_USER" \
+    DBUS_SESSION_BUS_ADDRESS="$DBUS_SESSION_BUS_ADDRESS" \
+    gsettings get org.gnome.desktop.interface cursor-theme 2>/dev/null || echo "'breeze_cursors'")"
+ORIGINAL_THEME="${ORIGINAL_THEME//\'/}"  # strip quotes gsettings adds
+
+set_cursor_theme() {
+    sudo -u "$REAL_USER" \
+        DBUS_SESSION_BUS_ADDRESS="$DBUS_SESSION_BUS_ADDRESS" \
+        XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR" \
+        gsettings set org.gnome.desktop.interface cursor-theme "$1" || true
+    sudo -u "$REAL_USER" \
+        DBUS_SESSION_BUS_ADDRESS="$DBUS_SESSION_BUS_ADDRESS" \
+        XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR" \
+        kwriteconfig6 --file kcminputrc --group Mouse --key cursorTheme "$1" || true
+    sudo -u "$REAL_USER" \
+        DBUS_SESSION_BUS_ADDRESS="$DBUS_SESSION_BUS_ADDRESS" \
+        XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR" \
+        qdbus6 org.kde.KWin /KWin reconfigure || true
+}
 
 # ─── Log header ───────────────────────────────────────────────────────────────
 echo "▶ Bridge starting up"
@@ -59,16 +77,17 @@ CPP_PID=""
 
 cleanup() {
     if [[ -n "$CPP_PID" ]] && kill -0 "$CPP_PID" 2>/dev/null; then
-        echo "■ Stopping stable_motion (pid $CPP_PID)..."
         kill -TERM "$CPP_PID" 2>/dev/null
         wait "$CPP_PID" 2>/dev/null
-        echo "■ Stopped cleanly."
     fi
+    set_cursor_theme "$ORIGINAL_THEME"
+    kill -TERM "-$$" 2>/dev/null
 }
 
 trap cleanup EXIT INT TERM
 
-# ─── Launch the C++ binary ────────────────────────────────────────────────────
+# ─── Swap cursor theme & launch ───────────────────────────────────────────────
+set_cursor_theme "Sweet-cursors"
 echo "● Launching stable_motion..."
 "$BINARY" "$DEVICE" "$GLIDE" &
 CPP_PID=$!
@@ -76,7 +95,6 @@ CPP_PID=$!
 echo "● stable_motion live! (pid $CPP_PID)"
 
 # ─── Wait & monitor ───────────────────────────────────────────────────────────
-# Forward the exit code of the C++ process back to the TUI
 wait "$CPP_PID"
 EXIT_CODE=$?
 

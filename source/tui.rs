@@ -1,6 +1,7 @@
 use std::io;
 use std::process::{Child, Command};
 use std::time::Duration;
+extern crate libc;
 
 use ratatui::{
     backend::CrosstermBackend,
@@ -82,7 +83,10 @@ impl App {
 
     fn stop(&mut self) {
         if let Some(mut c) = self.daemon.take() {
-            let _ = c.kill();
+            // Send SIGTERM to the entire process group so bridge.sh
+            // and the C++ child both die cleanly
+            let pid = c.id() as i32;
+            unsafe { libc::killpg(pid, libc::SIGTERM); }
             let _ = c.wait();
         }
         self.running    = false;
@@ -332,13 +336,11 @@ fn render_footer(f: &mut ratatui::Frame, area: Rect, app: &App) {
     f.render_widget(
         Paragraph::new(Line::from(vec![
             Span::styled("[S]", Style::default().fg(ACCENT).add_modifier(Modifier::BOLD)),
-            Span::styled(" Start/Stop  ", Style::default().fg(DIM)),
+            Span::styled(" Start  ", Style::default().fg(DIM)),
             Span::styled("[Tab]", Style::default().fg(ACCENT).add_modifier(Modifier::BOLD)),
             Span::styled(" Focus  ", Style::default().fg(DIM)),
             Span::styled("[↑↓]", Style::default().fg(ACCENT).add_modifier(Modifier::BOLD)),
             Span::styled(" Navigate  ", Style::default().fg(DIM)),
-            Span::styled("[Q]", Style::default().fg(DANGER).add_modifier(Modifier::BOLD)),
-            Span::styled(" Quit  ", Style::default().fg(DIM)),
         ])).alignment(Alignment::Right),
         cols[1],
     );
