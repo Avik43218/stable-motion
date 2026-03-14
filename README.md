@@ -157,7 +157,7 @@ Port to Windows (HID drivers) and macOS (global input hooks). Potential health m
 
 ## 🛠️ Tech Stack
 
-`C++17` · `FFTW3` · `Linux uinput` · `Linux input subsystem`
+`C++17` · `Rust` · `Bash` `FFTW3` · `Linux uinput` · `Linux input subsystem`
 
 ---
 
