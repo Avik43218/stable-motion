@@ -14,40 +14,41 @@
         .vibey-btn {
             background: linear-gradient(45deg, #ff007f, #7928ca);
             color: white;
-            padding: 24px 60px;
-            font-size: 1.6rem;
+
+            padding: 12px 24px;
+            font-size: 1rem;
             font-weight: 800;
             border: none;
-            border-radius: 60px; 
+            border-radius: 30px; 
             cursor: pointer;
-            box-shadow: 0 8px 15px rgba(121, 40, 202, 0.3);
+            box-shadow: 0 4px 10px rgba(121, 40, 202, 0.3);
             transition: all 0.3s ease;
             text-transform: uppercase;
-            letter-spacing: 3px;
+            letter-spacing: 1.5px;
             outline: none;
             
-            min-width: 420px;
+            min-width: 260px;
             text-align: center;
         }
 
-        /* 1. Default Text */
+        /* Default */
         .vibey-btn::after {
-            content: "Click Me";
+            content: "Click";
         }
 
-        /* 2. Hover Text & Animation */
+        /* Hover */
         .vibey-btn:hover {
-            transform: translateY(-6px) scale(1.08);
-            box-shadow: 0 18px 30px rgba(255, 0, 127, 0.5);
+            transform: translateY(-4px) scale(1.05); /* Softer pop for a smaller button */
+            box-shadow: 0 10px 20px rgba(255, 0, 127, 0.5);
         }
         .vibey-btn:hover::after {
             content: "Button is Hovered";
         }
 
-        /* 3. Click Text & Animation */
+        /* Click */
         .vibey-btn:active {
-            transform: translateY(3px) scale(0.95);
-            box-shadow: 0 5px 10px rgba(121, 40, 202, 0.2);
+            transform: translateY(2px) scale(0.95);
+            box-shadow: 0 3px 6px rgba(121, 40, 202, 0.2);
         }
         .vibey-btn:active::after {
             content: "Click Detected";
