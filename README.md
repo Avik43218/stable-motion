@@ -2,7 +2,7 @@
 ### *Empowering Precision for Parkinson's Patients*
 
 > **Team 404 Brain Not Found** | Healthcare Track  
-> Rudra Bhattacharjee · Samrat Talukdar · Avik Roy Choudhury · Shreyan Das · Soumyajit Maity
+> Rudra Bhattacharjee · Avik Roy Choudhury · Samrat Talukdar · Shreyan Das · Soumyajit Maity
 
 ---
 
