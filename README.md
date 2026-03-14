@@ -92,6 +92,7 @@ sudo dnf install fftw-devel
 ### Build
 ```bash
 g++ main.cpp -o stable_motion -lfftw3
+cargo build --release
 ```
 
 ### Run
@@ -99,13 +100,20 @@ g++ main.cpp -o stable_motion -lfftw3
 # Find your mouse device
 ls -l /dev/input/by-id/
 
-# Run with sudo (required for uinput and device grab)
+# Run directly with sudo (required for uinput and device grab)
 sudo ./stable_motion /dev/input/eventX [glide_factor]
+
+# Or run with TUI
+sudo ./target/release/stable_motion_tui
 ```
 
 ### Stop
 ```
+# For CLI
 CTRL+C
+
+# For TUI
+ALT+F4
 ```
 
 ---
