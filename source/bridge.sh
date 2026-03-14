@@ -87,7 +87,7 @@ cleanup() {
 trap cleanup EXIT INT TERM
 
 # ─── Swap cursor theme & launch ───────────────────────────────────────────────
-set_cursor_theme "Sweet-cursors"
+set_cursor_theme "Breeze Dark"
 echo "● Launching stable_motion..."
 "$BINARY" "$DEVICE" "$GLIDE" &
 CPP_PID=$!

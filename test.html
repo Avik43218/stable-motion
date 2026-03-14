@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #121212;
+            margin: 0;
+        }
+
+        .vibey-btn {
+            background: linear-gradient(45deg, #ff007f, #7928ca);
+            color: white;
+            padding: 24px 60px;
+            font-size: 1.6rem;
+            font-weight: 800;
+            border: none;
+            border-radius: 60px; 
+            cursor: pointer;
+            box-shadow: 0 8px 15px rgba(121, 40, 202, 0.3);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            outline: none;
+            
+            min-width: 420px;
+            text-align: center;
+        }
+
+        /* 1. Default Text */
+        .vibey-btn::after {
+            content: "Click Me";
+        }
+
+        /* 2. Hover Text & Animation */
+        .vibey-btn:hover {
+            transform: translateY(-6px) scale(1.08);
+            box-shadow: 0 18px 30px rgba(255, 0, 127, 0.5);
+        }
+        .vibey-btn:hover::after {
+            content: "Button is Hovered";
+        }
+
+        /* 3. Click Text & Animation */
+        .vibey-btn:active {
+            transform: translateY(3px) scale(0.95);
+            box-shadow: 0 5px 10px rgba(121, 40, 202, 0.2);
+        }
+        .vibey-btn:active::after {
+            content: "Click Detected";
+        }
+    </style>
+</head>
+<body>
+
+    <button class="vibey-btn" type="button" onclick="return false;"></button>
+
+</body>
+</html>
